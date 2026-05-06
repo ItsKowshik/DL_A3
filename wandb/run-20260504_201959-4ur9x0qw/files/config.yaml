@@ -1,0 +1,95 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            et6pyd6xh46w4qbfyxwro2xyt6o2bg4b:
+                codePath: experiment_2_2.py
+                codePathLocal: experiment_2_2.py
+                cpu_count: 10
+                cpu_count_logical: 16
+                cudaVersion: "13.0"
+                disk:
+                    /:
+                        total: "101384871936"
+                        used: "69422813184"
+                email: id25m803@smail.iitm.ac.in
+                executable: /home/kad/micromamba/envs/main/bin/python
+                git:
+                    commit: d74dd923bb5ccabe3fb38926d2d5573e3716233a
+                    remote: https://github.com/MiRL-IITM/da6401_assignment_3.git
+                gpu: NVIDIA GeForce RTX 5050 Laptop GPU
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Blackwell
+                      cudaCores: 2560
+                      memoryTotal: "8546942976"
+                      name: NVIDIA GeForce RTX 5050 Laptop GPU
+                      uuid: GPU-f7efdbb2-8b5c-34e0-69c3-d8b8a8e85300
+                host: kad-ASUS-TUF-Gaming-F16-FX608JH-FX608JH
+                memory:
+                    total: "16350658560"
+                os: Linux-6.17.0-22-generic-x86_64-with-glibc2.39
+                program: /media/kad/New_Volume1/DL/A3/A3/experiment_2_2.py
+                python: CPython 3.11.6
+                root: /media/kad/New_Volume1/DL/A3/A3
+                startedAt: "2026-05-04T14:49:59.296166Z"
+                writerId: et6pyd6xh46w4qbfyxwro2xyt6o2bg4b
+        m: []
+        python_version: 3.11.6
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 33
+                - 41
+                - 49
+                - 51
+                - 53
+                - 71
+                - 100
+                - 105
+            "2":
+                - 1
+                - 5
+                - 11
+                - 33
+                - 41
+                - 49
+                - 51
+                - 53
+                - 71
+                - 100
+                - 105
+            "3":
+                - 2
+                - 13
+                - 16
+                - 62
+            "4": 3.11.6
+            "5": 0.25.1
+            "6": 5.5.4
+            "10":
+                - 20
+            "12": 0.25.1
+            "13": linux-x86_64
+"N":
+    value: 3
+batch_size:
+    value: 128
+d_ff:
+    value: 512
+d_model:
+    value: 256
+dropout:
+    value: 0.1
+label_smooth:
+    value: 0.1
+num_epochs:
+    value: 20
+num_heads:
+    value: 8
+use_scaling:
+    value: false
+warmup_steps:
+    value: 4000

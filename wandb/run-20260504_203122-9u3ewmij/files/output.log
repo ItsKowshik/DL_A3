@@ -1,0 +1,51 @@
+Loading data...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading checkpoint...
+Model loaded. Num heads = 8
+
+Sentence 1: ein mann mit einem orangefarbenen hut , der etwas <unk> .
+  Head stats (sentence 1):
+    Head  1 | diag=0.217  next=0.357  entropy=1.131  longrange=0.062
+    Head  2 | diag=0.437  next=0.246  entropy=0.540  longrange=0.368
+    Head  3 | diag=0.164  next=0.079  entropy=1.633  longrange=0.517
+    Head  4 | diag=0.168  next=0.160  entropy=1.230  longrange=0.527
+    Head  5 | diag=0.205  next=0.113  entropy=1.597  longrange=0.321
+    Head  6 | diag=0.212  next=0.176  entropy=0.850  longrange=0.017
+    Head  7 | diag=0.203  next=0.123  entropy=1.265  longrange=0.266
+    Head  8 | diag=0.433  next=0.210  entropy=0.931  longrange=0.344
+  → Most local   : Head 2
+  → Next-token   : Head 1
+  → Long-range   : Head 4
+  → Most uniform : Head 3
+
+Sentence 2: ein boston terrier läuft über <unk> gras vor einem weißen zaun .
+  Head stats (sentence 2):
+    Head  1 | diag=0.329  next=0.172  entropy=1.241  longrange=0.370
+    Head  2 | diag=0.441  next=0.393  entropy=0.639  longrange=0.082
+    Head  3 | diag=0.271  next=0.121  entropy=1.235  longrange=0.354
+    Head  4 | diag=0.141  next=0.046  entropy=1.741  longrange=0.495
+    Head  5 | diag=0.244  next=0.058  entropy=1.010  longrange=0.163
+    Head  6 | diag=0.197  next=0.116  entropy=1.187  longrange=0.167
+    Head  7 | diag=0.233  next=0.124  entropy=1.558  longrange=0.079
+    Head  8 | diag=0.446  next=0.232  entropy=0.858  longrange=0.304
+  → Most local   : Head 8
+  → Next-token   : Head 2
+  → Long-range   : Head 4
+  → Most uniform : Head 4
+
+Sentence 3: ein mädchen in einem karateanzug bricht ein brett mit einem tritt .
+  Head stats (sentence 3):
+    Head  1 | diag=0.203  next=0.228  entropy=1.371  longrange=0.211
+    Head  2 | diag=0.439  next=0.276  entropy=0.407  longrange=0.060
+    Head  3 | diag=0.296  next=0.172  entropy=1.089  longrange=0.119
+    Head  4 | diag=0.148  next=0.086  entropy=1.527  longrange=0.225
+    Head  5 | diag=0.166  next=0.085  entropy=1.286  longrange=0.324
+    Head  6 | diag=0.153  next=0.123  entropy=0.963  longrange=0.034
+    Head  7 | diag=0.275  next=0.154  entropy=1.288  longrange=0.310
+    Head  8 | diag=0.422  next=0.304  entropy=0.645  longrange=0.092
+  → Most local   : Head 2
+  → Next-token   : Head 8
+  → Long-range   : Head 5
+  → Most uniform : Head 4
+
+Potentially redundant heads (above-avg entropy): [1, 3, 4, 5, 7]

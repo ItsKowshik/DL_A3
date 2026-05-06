@@ -1,0 +1,40 @@
+{
+  "os": "Linux-6.17.0-22-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.11.6",
+  "startedAt": "2026-05-04T13:52:30.110283Z",
+  "program": "/media/kad/New_Volume1/DL/A3/A3/train.py",
+  "codePath": "train.py",
+  "codePathLocal": "train.py",
+  "git": {
+    "remote": "https://github.com/MiRL-IITM/da6401_assignment_3.git",
+    "commit": "d74dd923bb5ccabe3fb38926d2d5573e3716233a"
+  },
+  "email": "id25m803@smail.iitm.ac.in",
+  "root": "/media/kad/New_Volume1/DL/A3/A3",
+  "host": "kad-ASUS-TUF-Gaming-F16-FX608JH-FX608JH",
+  "executable": "/home/kad/micromamba/envs/main/bin/python",
+  "cpu_count": 10,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 5050 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "101384871936",
+      "used": "69421309952"
+    }
+  },
+  "memory": {
+    "total": "16350658560"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 5050 Laptop GPU",
+      "memoryTotal": "8546942976",
+      "cudaCores": 2560,
+      "architecture": "Blackwell",
+      "uuid": "GPU-f7efdbb2-8b5c-34e0-69c3-d8b8a8e85300"
+    }
+  ],
+  "cudaVersion": "13.0",
+  "writerId": "kwlg76esiq40diiaiaknymyhkj8uewzo"
+}
