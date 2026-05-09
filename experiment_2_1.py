@@ -18,7 +18,7 @@ from tqdm import tqdm
 from model import Transformer, make_src_mask, make_tgt_mask
 from dataset import get_dataloaders, PAD_IDX, SOS_IDX, EOS_IDX
 from lr_scheduler import NoamScheduler
-from train import LabelSmoothingLoss, run_epoch, evaluate_bleu, save_checkpoint
+from A3.train import LabelSmoothingLoss, run_epoch, evaluate_bleu, save_checkpoint
 import config
 
 

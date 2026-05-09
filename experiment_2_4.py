@@ -29,7 +29,7 @@ from model import (
 )
 from dataset import get_dataloaders, PAD_IDX, SOS_IDX, EOS_IDX
 from lr_scheduler import NoamScheduler
-from train import (
+from A3.train import (
     LabelSmoothingLoss, run_epoch,
     save_checkpoint, evaluate_bleu
 )

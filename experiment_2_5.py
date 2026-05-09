@@ -30,7 +30,7 @@ from tqdm import tqdm
 from model import Transformer, make_src_mask, make_tgt_mask
 from dataset import get_dataloaders, PAD_IDX, SOS_IDX, EOS_IDX
 from lr_scheduler import NoamScheduler
-from train import save_checkpoint, evaluate_bleu
+from A3.train import save_checkpoint, evaluate_bleu
 import config
 
 

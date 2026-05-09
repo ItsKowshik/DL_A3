@@ -464,37 +464,100 @@ class Decoder(nn.Module):
 # ❾  FULL TRANSFORMER
 # ══════════════════════════════════════════════════════════════════════
 
+# ══════════════════════════════════════════════════════════════════════
+# SELF-CONTAINED VOCAB + CONSTANTS (no dataset.py / datasets import)
+# Used by Transformer.__init__ in inference mode on autograder.
+# ══════════════════════════════════════════════════════════════════════
+
+_UNK_IDX = 0
+_PAD_IDX = 1
+_SOS_IDX = 2
+_EOS_IDX = 3
+_UNK_TOK = "<unk>"
+
+
+class _MinimalVocab:
+    """
+    Lightweight vocabulary: only needs a pre-built stoi dict.
+    No dependency on datasets, HuggingFace, or dataset.py.
+    """
+    def __init__(self, stoi: dict):
+        self.stoi = stoi
+        self.itos = {v: k for k, v in stoi.items()}
+
+    def __len__(self):
+        return len(self.stoi)
+
+    def lookup_token(self, idx: int) -> str:
+        return self.itos.get(idx, _UNK_TOK)
+
+    def encode(self, tokens):
+        return [self.stoi.get(t, _UNK_IDX) for t in tokens]
+
+
 class Transformer(nn.Module):
     """
     Full Encoder-Decoder Transformer for sequence-to-sequence tasks.
 
+    Supports two modes:
+        Training mode : pass src_vocab_size and tgt_vocab_size explicitly.
+        Inference mode: call Transformer() with no args — downloads weights
+                        from Google Drive, loads vocab and spaCy tokenizers,
+                        ready for infer(german_sentence).
+
     Args:
-        src_vocab_size (int)  : Source vocabulary size.
-        tgt_vocab_size (int)  : Target vocabulary size.
-        d_model        (int)  : Model dimensionality (default 512).
-        N              (int)  : Number of encoder/decoder layers (default 6).
-        num_heads      (int)  : Number of attention heads (default 8).
-        d_ff           (int)  : FFN inner dimensionality (default 2048).
-        dropout        (float): Dropout probability (default 0.1).
+        src_vocab_size (int)  : Source vocab size. None → inference mode.
+        tgt_vocab_size (int)  : Target vocab size. None → inference mode.
+        d_model        (int)  : Model dimensionality.
+        N              (int)  : Number of encoder/decoder layers.
+        num_heads      (int)  : Number of attention heads.
+        d_ff           (int)  : FFN inner dimensionality.
+        dropout        (float): Dropout probability.
+        gdrive_id      (str)  : Google Drive file ID for weights download.
+        checkpoint_path(str)  : Local path to save/load checkpoint.
     """
+
+    # ── REPLACE THIS WITH YOUR ACTUAL GOOGLE DRIVE FILE ID ────────────
+    _GDRIVE_ID       = "1uUXcEhitXt5eX6Y5HD3J59O7iYrt79LU"
+    _CHECKPOINT_PATH = "best_model.pt"
+    # ──────────────────────────────────────────────────────────────────
 
     def __init__(
         self,
-        src_vocab_size: int,
-        tgt_vocab_size: int,
-        d_model:   int   = 512,
-        N:         int   = 6,
-        num_heads: int   = 8,
-        d_ff:      int   = 2048,
-        dropout:   float = 0.1,
+        src_vocab_size: int   = 7853,   # default: our trained model vocab size
+        tgt_vocab_size: int   = 5893,   # default: our trained model vocab size
+        d_model:   int        = 256,
+        N:         int        = 3,
+        num_heads: int        = 8,
+        d_ff:      int        = 512,
+        dropout:   float      = 0.3,
+        checkpoint_path: str  = "best_model.pt",  # triggers download+load on init
     ) -> None:
         super().__init__()
 
+        # Build model architecture first
+        self._build_model(
+            src_vocab_size, tgt_vocab_size,
+            d_model, N, num_heads, d_ff, dropout,
+        )
+
+        # Always load weights from checkpoint (download if needed)
+        self._setup_inference(
+            self._GDRIVE_ID,
+            checkpoint_path,
+        )
+
+    def _build_model(
+        self,
+        src_vocab_size, tgt_vocab_size,
+        d_model, N, num_heads, d_ff, dropout,
+    ):
+        """Build all model layers."""
         # Embeddings
         self.src_embed = nn.Embedding(src_vocab_size, d_model, padding_idx=1)
         self.tgt_embed = nn.Embedding(tgt_vocab_size, d_model, padding_idx=1)
 
-        # Positional Encoding (shared pattern, separate instances ok too)
+        # Positional Encoding
         self.src_pe = PositionalEncoding(d_model, dropout)
         self.tgt_pe = PositionalEncoding(d_model, dropout)
 
@@ -518,15 +581,107 @@ class Transformer(nn.Module):
             "dropout":        dropout,
         }
 
-        # Weight initialisation (Xavier uniform, as common practice)
+        # Xavier uniform initialisation
         self._init_weights()
+
+    def _setup_inference(self, gdrive_id: str, checkpoint_path: str):
+        """
+        Download checkpoint, load weights + vocab + spaCy tokenizer.
+        Architecture already built before this is called.
+        Fully self-contained — no dataset.py / datasets imports.
+        Auto-downloads de_core_news_sm if missing (handles autograder).
+        """
+        import os, spacy
+
+        # ── 1. Download weights ────────────────────────────────────────
+        if not os.path.exists(checkpoint_path):
+            print(f"Downloading weights from Google Drive → {checkpoint_path}")
+            import gdown
+            gdown.download(id=gdrive_id, output=checkpoint_path, quiet=False)
+
+        # ── 2. Load checkpoint ─────────────────────────────────────────
+        ckpt = torch.load(checkpoint_path, map_location="cpu")
+        print(f"Loaded checkpoint config: {ckpt['model_config']}")
+
+        # ── 3. Load weights ────────────────────────────────────────────
+        self.load_state_dict(ckpt["model_state_dict"])
+        print("Model weights loaded.")
+
+        # ── 4. Restore vocab (self-contained, no dataset.py needed) ───
+        self._sos = _SOS_IDX
+        self._eos = _EOS_IDX
+        self._pad = _PAD_IDX
+
+        if "src_vocab_stoi" in ckpt:
+            self.src_vocab = _MinimalVocab(ckpt["src_vocab_stoi"])
+            self.tgt_vocab = _MinimalVocab(ckpt["tgt_vocab_stoi"])
+            print(f"Vocab restored: src={len(self.src_vocab)} tgt={len(self.tgt_vocab)}")
+        else:
+            raise RuntimeError(
+                "Checkpoint missing vocab. Re-save with save_checkpoint() "
+                "that embeds src_vocab_stoi and tgt_vocab_stoi."
+            )
+
+        # ── 5. Load spaCy German tokenizer (auto-download if missing) ──
+        # Use spacy.cli.download — no subprocess, no python/python3 ambiguity
+        try:
+            self._spacy_de = spacy.load("de_core_news_sm")
+        except OSError:
+            print("de_core_news_sm not found — downloading via spacy.cli...")
+            from spacy.cli import download as spacy_download
+            spacy_download("de_core_news_sm")
+            self._spacy_de = spacy.load("de_core_news_sm")
+        print("spaCy German tokenizer ready.")
+
+    def _tokenize_de(self, text: str):
+        """German string → list of lowercase tokens via spaCy."""
+        return [tok.text.lower() for tok in self._spacy_de.tokenizer(text)]
 
     def _init_weights(self):
         for p in self.parameters():
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
 
-    # ── AUTOGRADER HOOKS ────────────────────────────────────────────
+    # ── INFERENCE ENTRY POINT (autograder contract) ─────────────────
+
+    def infer(self, src_sentence: str) -> str:
+        """
+        End-to-end NMT: German string → English string.
+        Greedy autoregressive decoding (fast, fits 3-sec autograder timeout).
+        """
+        device = next(self.parameters()).device
+        sos, eos = self._sos, self._eos
+
+        # 1. Tokenise German
+        tokens  = self._tokenize_de(src_sentence)
+        indices = [sos] + self.src_vocab.encode(tokens) + [eos]
+        src     = torch.tensor([indices], dtype=torch.long, device=device)
+
+        # 2. Encode
+        src_mask = make_src_mask(src).to(device)
+        self.eval()
+        with torch.no_grad():
+            memory = self.encode(src, src_mask)
+
+            # 3. Greedy decode — one argmax per step, max 50 tokens
+            ys = torch.tensor([[sos]], dtype=torch.long, device=device)
+            for _ in range(50):
+                tgt_mask = make_tgt_mask(ys).to(device)
+                logits   = self.decode(memory, src_mask, ys, tgt_mask)
+                next_tok = logits[:, -1, :].argmax(dim=-1, keepdim=True)
+                ys = torch.cat([ys, next_tok], dim=1)
+                if next_tok.item() == eos:
+                    break
+
+        # 4. Detokenise
+        out = []
+        for idx in ys[0, 1:].tolist():
+            if idx == eos:
+                break
+            tok = self.tgt_vocab.lookup_token(idx)
+            if tok not in ("<unk>", "<pad>", "<sos>", "<eos>"):
+                out.append(tok)
+        return " ".join(out)
 
     def encode(
         self,

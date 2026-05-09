@@ -1,5 +1,5 @@
 # test_beams.py
-from train import evaluate_bleu, load_checkpoint, beam_search_decode
+from A3.train import evaluate_bleu, load_checkpoint, beam_search_decode
 from dataset import get_dataloaders
 from model import Transformer
 import config, torch

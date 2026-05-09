@@ -21,7 +21,7 @@ import os
 
 from model import Transformer, make_src_mask, make_tgt_mask
 from dataset import get_dataloaders, PAD_IDX, SOS_IDX, EOS_IDX
-from train import load_checkpoint
+from A3.train import load_checkpoint
 import config
 
 
