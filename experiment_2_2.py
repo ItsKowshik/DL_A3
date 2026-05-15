@@ -26,7 +26,7 @@ from model import (
 )
 from dataset import get_dataloaders, PAD_IDX, SOS_IDX, EOS_IDX
 from lr_scheduler import NoamScheduler
-from A3.train import LabelSmoothingLoss, save_checkpoint, evaluate_bleu
+from train import LabelSmoothingLoss, save_checkpoint, evaluate_bleu
 import config
 
 
@@ -63,16 +63,15 @@ class MHAWithScalingToggle(nn.Module):
                  dropout: float = 0.1, use_scaling: bool = True) -> None:
         super().__init__()
         assert d_model % num_heads == 0
-        self.d_model     = d_model
-        self.num_heads   = num_heads
-        self.d_k         = d_model // num_heads
-        self.use_scaling = use_scaling
-
-        self.W_q = nn.Linear(d_model, d_model)
-        self.W_k = nn.Linear(d_model, d_model)
-        self.W_v = nn.Linear(d_model, d_model)
-        self.W_o = nn.Linear(d_model, d_model)
-        self.dropout     = nn.Dropout(p=dropout)
+        self.d_model      = d_model
+        self.num_heads    = num_heads
+        self.d_k          = d_model // num_heads
+        self.use_scaling  = use_scaling
+        self.W_q          = nn.Linear(d_model, d_model)
+        self.W_k          = nn.Linear(d_model, d_model)
+        self.W_v          = nn.Linear(d_model, d_model)
+        self.W_o          = nn.Linear(d_model, d_model)
+        self.dropout      = nn.Dropout(p=dropout)
         self.attn_weights = None
 
     def _split_heads(self, x):
@@ -87,7 +86,6 @@ class MHAWithScalingToggle(nn.Module):
         Q = self._split_heads(self.W_q(query))
         K = self._split_heads(self.W_k(key))
         V = self._split_heads(self.W_v(value))
-
         x, self.attn_weights = scaled_dot_product_attention_ablation(
             Q, K, V, mask, use_scaling=self.use_scaling
         )
@@ -95,16 +93,13 @@ class MHAWithScalingToggle(nn.Module):
 
 
 class EncoderLayerAblation(nn.Module):
-    """EncoderLayer using MHAWithScalingToggle."""
-    def __init__(self, d_model, num_heads, d_ff,
-                 dropout=0.1, use_scaling=True):
+    def __init__(self, d_model, num_heads, d_ff, dropout=0.1, use_scaling=True):
         super().__init__()
-        self.self_attn = MHAWithScalingToggle(d_model, num_heads,
-                                              dropout, use_scaling)
-        self.ffn   = PositionwiseFeedForward(d_model, d_ff, dropout)
-        self.norm1 = nn.LayerNorm(d_model)
-        self.norm2 = nn.LayerNorm(d_model)
-        self.dropout = nn.Dropout(p=dropout)
+        self.self_attn = MHAWithScalingToggle(d_model, num_heads, dropout, use_scaling)
+        self.ffn       = PositionwiseFeedForward(d_model, d_ff, dropout)
+        self.norm1     = nn.LayerNorm(d_model)
+        self.norm2     = nn.LayerNorm(d_model)
+        self.dropout   = nn.Dropout(p=dropout)
 
     def forward(self, x, src_mask):
         x = self.norm1(x + self.dropout(self.self_attn(x, x, x, src_mask)))
@@ -113,19 +108,15 @@ class EncoderLayerAblation(nn.Module):
 
 
 class DecoderLayerAblation(nn.Module):
-    """DecoderLayer using MHAWithScalingToggle."""
-    def __init__(self, d_model, num_heads, d_ff,
-                 dropout=0.1, use_scaling=True):
+    def __init__(self, d_model, num_heads, d_ff, dropout=0.1, use_scaling=True):
         super().__init__()
-        self.self_attn  = MHAWithScalingToggle(d_model, num_heads,
-                                               dropout, use_scaling)
-        self.cross_attn = MHAWithScalingToggle(d_model, num_heads,
-                                               dropout, use_scaling)
-        self.ffn   = PositionwiseFeedForward(d_model, d_ff, dropout)
-        self.norm1 = nn.LayerNorm(d_model)
-        self.norm2 = nn.LayerNorm(d_model)
-        self.norm3 = nn.LayerNorm(d_model)
-        self.dropout = nn.Dropout(p=dropout)
+        self.self_attn  = MHAWithScalingToggle(d_model, num_heads, dropout, use_scaling)
+        self.cross_attn = MHAWithScalingToggle(d_model, num_heads, dropout, use_scaling)
+        self.ffn        = PositionwiseFeedForward(d_model, d_ff, dropout)
+        self.norm1      = nn.LayerNorm(d_model)
+        self.norm2      = nn.LayerNorm(d_model)
+        self.norm3      = nn.LayerNorm(d_model)
+        self.dropout    = nn.Dropout(p=dropout)
 
     def forward(self, x, memory, src_mask, tgt_mask):
         x = self.norm1(x + self.dropout(self.self_attn(x, x, x, tgt_mask)))
@@ -134,26 +125,21 @@ class DecoderLayerAblation(nn.Module):
         return x
 
 
-def build_ablation_transformer(src_vocab_size, tgt_vocab_size,
-                                use_scaling=True):
-    """Build Transformer with scaling toggle baked into every attn layer."""
-    import copy
+def build_ablation_transformer(src_vocab_size, tgt_vocab_size, use_scaling=True):
+    """Build Transformer with scaling toggle in every attention layer."""
 
     class AblationTransformer(Transformer):
         def __init__(self, src_vocab_size, tgt_vocab_size,
                      d_model, N, num_heads, d_ff, dropout, use_scaling):
-            # bypass parent __init__, build manually
+            # Bypass Transformer.__init__ entirely — build manually
+            # Avoids checkpoint download / inference mode setup
             nn.Module.__init__(self)
             self.src_embed = nn.Embedding(src_vocab_size, d_model, padding_idx=1)
             self.tgt_embed = nn.Embedding(tgt_vocab_size, d_model, padding_idx=1)
             self.src_pe    = PositionalEncoding(d_model, dropout)
             self.tgt_pe    = PositionalEncoding(d_model, dropout)
-
-            enc_layer = EncoderLayerAblation(d_model, num_heads,
-                                             d_ff, dropout, use_scaling)
-            dec_layer = DecoderLayerAblation(d_model, num_heads,
-                                             d_ff, dropout, use_scaling)
-
+            enc_layer = EncoderLayerAblation(d_model, num_heads, d_ff, dropout, use_scaling)
+            dec_layer = DecoderLayerAblation(d_model, num_heads, d_ff, dropout, use_scaling)
             self.encoder = Encoder(enc_layer, N)
             self.decoder = Decoder(dec_layer, N)
             self.fc_out  = nn.Linear(d_model, tgt_vocab_size)
@@ -161,8 +147,7 @@ def build_ablation_transformer(src_vocab_size, tgt_vocab_size,
                 "src_vocab_size": src_vocab_size,
                 "tgt_vocab_size": tgt_vocab_size,
                 "d_model": d_model, "N": N,
-                "num_heads": num_heads, "d_ff": d_ff,
-                "dropout": dropout,
+                "num_heads": num_heads, "d_ff": d_ff, "dropout": dropout,
             }
             self._d_model = d_model
             for p in self.parameters():
@@ -179,8 +164,7 @@ def build_ablation_transformer(src_vocab_size, tgt_vocab_size,
             return self.fc_out(x)
 
         def forward(self, src, tgt, src_mask, tgt_mask):
-            return self.decode(self.encode(src, src_mask),
-                               src_mask, tgt, tgt_mask)
+            return self.decode(self.encode(src, src_mask), src_mask, tgt, tgt_mask)
 
     return AblationTransformer(
         src_vocab_size=src_vocab_size,
@@ -199,11 +183,7 @@ def build_ablation_transformer(src_vocab_size, tgt_vocab_size,
 # ══════════════════════════════════════════════════════════════════════
 
 def get_qk_grad_norms(model):
-    """
-    Compute mean gradient norm of all W_q and W_k weight matrices
-    across all encoder and decoder layers.
-    Returns (q_norm, k_norm) floats.
-    """
+    """Mean grad norm of W_q and W_k across all MHA layers."""
     q_norms, k_norms = [], []
     for module in model.modules():
         if isinstance(module, MHAWithScalingToggle):
@@ -216,12 +196,12 @@ def get_qk_grad_norms(model):
     return q, k
 
 
+GRAD_LOG_STEPS = 1000
+
+
 # ══════════════════════════════════════════════════════════════════════
 #  TRAINING RUNNER
 # ══════════════════════════════════════════════════════════════════════
-
-GRAD_LOG_STEPS = 1000   # log grad norms only for first 1000 steps
-
 
 def run_experiment(use_scaling: bool):
     device   = "cuda" if torch.cuda.is_available() else "cpu"
@@ -247,9 +227,7 @@ def run_experiment(use_scaling: bool):
         reinit=True,
     )
 
-    print(f"\n{'='*50}")
-    print(f"Experiment 2.2 | {run_name}")
-    print(f"{'='*50}")
+    print(f"\n{'='*50}\nExperiment 2.2 | {run_name}\n{'='*50}")
 
     train_loader, val_loader, test_loader, src_vocab, tgt_vocab = \
         get_dataloaders(batch_size=config.BATCH_SIZE)
@@ -260,11 +238,12 @@ def run_experiment(use_scaling: bool):
 
     optimizer = torch.optim.Adam(
         model.parameters(), lr=1.0,
-        betas=(0.9, 0.98), eps=1e-9
+        betas=(0.9, 0.98), eps=1e-9,
+        weight_decay=config.WEIGHT_DECAY,
     )
     scheduler = NoamScheduler(
         optimizer, d_model=config.D_MODEL,
-        warmup_steps=config.WARMUP_STEPS
+        warmup_steps=config.WARMUP_STEPS,
     )
     loss_fn = LabelSmoothingLoss(
         vocab_size=len(tgt_vocab),
@@ -274,16 +253,17 @@ def run_experiment(use_scaling: bool):
 
     ckpt_dir = os.path.join(config.CHECKPOINT_DIR, group, run_name)
     os.makedirs(ckpt_dir, exist_ok=True)
+    best_path = os.path.join(ckpt_dir, "best_model.pt")
 
-    global_step  = 0
+    global_step   = 0
     best_val_loss = float("inf")
+    patience_counter = 0
 
     for epoch in range(1, config.NUM_EPOCHS + 1):
         model.train()
         total_loss, total_tokens = 0.0, 0
 
-        for src, tgt in tqdm(train_loader,
-                             desc=f"Train epoch {epoch} [{run_name}]"):
+        for src, tgt in tqdm(train_loader, desc=f"Train {epoch} [{run_name}]"):
             src, tgt = src.to(device), tgt.to(device)
             tgt_in, tgt_out = tgt[:, :-1], tgt[:, 1:]
 
@@ -299,21 +279,21 @@ def run_experiment(use_scaling: bool):
             optimizer.zero_grad()
             loss.backward()
 
-            # ── Log Q/K grad norms for first 1000 steps ──────────────
+            # ── Log Q/K grad norms BEFORE clipping (first 1000 steps) ─
             if global_step < GRAD_LOG_STEPS:
                 q_norm, k_norm = get_qk_grad_norms(model)
+                # Use step= parameter so W&B x-axis is step not epoch
                 wandb.log({
-                    "grad_norm_Q":    q_norm,
-                    "grad_norm_K":    k_norm,
-                    "step":           global_step,
-                })
+                    "grad_norm_Q": q_norm,
+                    "grad_norm_K": k_norm,
+                }, step=global_step)
 
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
             scheduler.step()
             global_step += 1
 
-            non_pad = (tgt_out != PAD_IDX).sum().item()
+            non_pad       = (tgt_out != PAD_IDX).sum().item()
             total_loss   += loss.item() * non_pad
             total_tokens += non_pad
 
@@ -346,17 +326,22 @@ def run_experiment(use_scaling: bool):
         })
 
         if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            save_checkpoint(
-                model, optimizer, scheduler, epoch,
-                os.path.join(ckpt_dir, "best_model.pt")
-            )
+            best_val_loss    = val_loss
+            patience_counter = 0
+            model.src_vocab  = src_vocab
+            model.tgt_vocab  = tgt_vocab
+            save_checkpoint(model, optimizer, scheduler, epoch, best_path)
+        else:
+            patience_counter += 1
+            if patience_counter >= config.PATIENCE:
+                print(f"Early stopping at epoch {epoch}.")
+                wandb.run.summary["stopped_epoch"] = epoch
+                break
 
-    # BLEU
     bleu = evaluate_bleu(model, test_loader, tgt_vocab, device=device)
     print(f"Test BLEU ({run_name}): {bleu:.2f}")
     wandb.run.summary["test_bleu"] = bleu
-    wandb.log({"test_bleu": bleu, "epoch": config.NUM_EPOCHS})
+    wandb.log({"test_bleu": bleu, "epoch": epoch})
     wandb.finish()
 
 
@@ -365,13 +350,12 @@ def run_experiment(use_scaling: bool):
 # ══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    # Run A: standard scaled attention
     run_experiment(use_scaling=True)
-
-    # Run B: no scaling — raw dot products
     run_experiment(use_scaling=False)
 
     print("\nExperiment 2.2 complete.")
     print("W&B → group 'scaling-ablation'")
-    print("Plot: grad_norm_Q and grad_norm_K vs step (first 1000 steps)")
-    print("Plot: train_loss and val_loss vs epoch")
+    print("Key plots:")
+    print("  1. grad_norm_Q + grad_norm_K vs step (first 1000) — overlay both runs")
+    print("  2. train_loss + val_loss vs epoch — overlay both runs")
+    print("  3. test_bleu bar chart")

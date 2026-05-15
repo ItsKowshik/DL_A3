@@ -1,12 +1,12 @@
-# Graph Report - A3  (2026-05-09)
+# Graph Report - A3  (2026-05-15)
 
 ## Corpus Check
-- 15 files · ~36,450 words
+- 15 files · ~91,726 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 260 nodes · 562 edges · 53 communities detected
-- Extraction: 49% EXTRACTED · 51% INFERRED · 0% AMBIGUOUS · INFERRED: 286 edges (avg confidence: 0.56)
+- 279 nodes · 612 edges · 61 communities detected
+- Extraction: 45% EXTRACTED · 55% INFERRED · 0% AMBIGUOUS · INFERRED: 336 edges (avg confidence: 0.55)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -24,7 +24,7 @@
 - [[_COMMUNITY_Community 11|Community 11]]
 - [[_COMMUNITY_Community 12|Community 12]]
 - [[_COMMUNITY_Community 13|Community 13]]
-- [[_COMMUNITY_Community 17|Community 17]]
+- [[_COMMUNITY_Community 14|Community 14]]
 - [[_COMMUNITY_Community 18|Community 18]]
 - [[_COMMUNITY_Community 19|Community 19]]
 - [[_COMMUNITY_Community 20|Community 20]]
@@ -63,345 +63,407 @@
 - [[_COMMUNITY_Community 53|Community 53]]
 - [[_COMMUNITY_Community 54|Community 54]]
 - [[_COMMUNITY_Community 55|Community 55]]
+- [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
+- [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Transformer` - 69 edges
-2. `NoamScheduler` - 47 edges
-3. `LabelSmoothingLoss` - 29 edges
-4. `MultiHeadAttention` - 24 edges
-5. `PositionwiseFeedForward` - 24 edges
-6. `Encoder` - 24 edges
-7. `Decoder` - 24 edges
-8. `Vocabulary` - 22 edges
-9. `PositionalEncoding` - 22 edges
-10. `EncoderLayer` - 22 edges
+1. `Transformer` - 79 edges
+2. `NoamScheduler` - 54 edges
+3. `LabelSmoothingLoss` - 34 edges
+4. `PositionwiseFeedForward` - 28 edges
+5. `Encoder` - 28 edges
+6. `Decoder` - 28 edges
+7. `MultiHeadAttention` - 26 edges
+8. `PositionalEncoding` - 26 edges
+9. `EncoderLayer` - 26 edges
+10. `DecoderLayer` - 26 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `debug_infer.py — diagnose why infer() outputs only periods` --uses--> `Transformer`  [INFERRED]
   debug_infer.py → model.py
-- `Generate a translation token-by-token using greedy decoding.      Args:` --uses--> `Vocabulary`  [INFERRED]
-  train.py → dataset.py
-- `run_experiment()` --calls--> `get_dataloaders()`  [INFERRED]
-  experiment_2_3.py → dataset.py
-- `run_experiment()` --calls--> `get_dataloaders()`  [INFERRED]
-  experiment_2_5.py → dataset.py
-- `run_experiment()` --calls--> `Transformer`  [INFERRED]
-  experiment_2_1.py → model.py
+- `experiment_2_3.py — Attention Rollout & Head Specialization DA6401 Assignment 3` --uses--> `Transformer`  [INFERRED]
+  experiment_2_3.py → model.py
+- `Single head heatmap as matplotlib figure → wandb.Image.` --uses--> `Transformer`  [INFERRED]
+  experiment_2_3.py → model.py
+- `Log one heatmap per head as wandb.Image.` --uses--> `Transformer`  [INFERRED]
+  experiment_2_3.py → model.py
+- `Log comparison heatmaps for the 4 most interesting heads.` --uses--> `Transformer`  [INFERRED]
+  experiment_2_3.py → model.py
 
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.08
-Nodes (35): collate_fn(), get_dataloaders(), dataset.py — Data Loading, Tokenization & Vocabulary DA6401 Assignment 3: "Atten, Pads src and tgt sequences to the max length in the batch.      Args:         ba, Build train / val / test DataLoaders for Multi30k.      Vocab built from train s, Token ↔ index mapping.      Special tokens always occupy fixed indices:, List[str] → List[int], Vocabulary (+27 more)
+Cohesion: 0.15
+Nodes (35): DecoderLayerAblation, EncoderLayerAblation, experiment_2_2.py — Ablation: Scaling Factor 1/√dk DA6401 Assignment 3 — W&B Rep, DecoderLayer using MHAWithScalingToggle., Build Transformer with scaling toggle in every attention layer., Build Transformer with scaling toggle baked into every attn layer., Mean grad norm of W_q and W_k across all MHA layers., Compute mean gradient norm of all W_q and W_k weight matrices     across all enc (+27 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.08
-Nodes (32): analyze_heads(), extract_encoder_attn(), plot_head_comparison(), plot_head_heatmaps(), experiment_2_3.py — Attention Rollout & Head Specialization DA6401 Assignment 3, Side-by-side comparison of specific heads for report.     interesting_heads: lis, Compute simple statistics to characterise each head.      Returns dict with per-, Run encoder forward pass and return attention weights from     every head in the (+24 more)
+Cohesion: 0.06
+Nodes (38): experiment_2_1.py — Noam Scheduler vs Fixed Learning Rate DA6401 Assignment 3 —, One epoch of training or evaluation.     Returns (avg_loss, token_accuracy)., run_epoch_with_acc(), run_experiment(), Side-by-side comparison of specific heads for report.     interesting_heads: lis, Compute simple statistics to characterise each head.      Returns dict with per-, Run encoder forward pass and return attention weights from     every head in the, Plot one heatmap per attention head.      Args:         attn_weights : [num_head (+30 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.12
-Nodes (15): LabelSmoothingLossTracked, experiment_2_5.py — Decoder Sensitivity: Label Smoothing DA6401 Assignment 3 — W, Run one epoch. Returns (avg_loss, avg_perplexity, mean_confidence).     Confiden, Label smoothing loss that also tracks prediction confidence.      Confidence = m, Args:             logits : [batch * tgt_len, vocab_size]             target : [b, run_epoch_tracked(), run_experiment(), get_lr_history() (+7 more)
+Cohesion: 0.07
+Nodes (28): collate_fn(), get_dataloaders(), Multi30kDataset, dataset.py — Data Loading, Tokenization & Vocabulary DA6401 Assignment 3: "Atten, German text → list of lowercase tokens via spaCy., English text → list of lowercase tokens via spaCy., Builds the vocabulary mapping for src (de) and tgt (en), including:         <unk, Convert token lists → index tensors.         Wraps each sentence with <sos> and (+20 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.12
-Nodes (9): Dataset, Multi30kDataset, German text → list of lowercase tokens via spaCy., English text → list of lowercase tokens via spaCy., Builds the vocabulary mapping for src (de) and tgt (en), including:         <unk, Convert token lists → index tensors.         Wraps each sentence with <sos> and, Build vocab from list-of-token-lists.         Only tokens appearing >= min_freq, Loads the Multi30k dataset and prepares tokenizers.          Args:             s (+1 more)
+Cohesion: 0.09
+Nodes (19): Train transformer with either Noam or fixed LR.      Args:         use_noam : Tr, LabelSmoothingLossTracked, experiment_2_5.py — Decoder Sensitivity: Label Smoothing DA6401 Assignment 3 — W, Returns (avg_loss, perplexity, mean_confidence)., Run one epoch. Returns (avg_loss, avg_perplexity, mean_confidence).     Confiden, Label smoothing loss that also tracks prediction confidence.      Confidence = m, Label smoothing loss that also tracks prediction confidence.      Confidence = m, Args:             logits : [batch * tgt_len, vocab_size]             target : [b (+11 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.23
-Nodes (7): EncoderLayerAblation, EncoderLayer using MHAWithScalingToggle., MultiHeadAttention, PositionwiseFeedForward, model.py — Transformer Architecture Skeleton DA6401 Assignment 3: "Attention Is, Multi-Head Attention as in "Attention Is All You Need", §3.2.2.          MultiHe, Position-wise Feed-Forward Network, §3.3:          FFN(x) = max(0, x·W₁ + b₁)·W₂
+Cohesion: 0.27
+Nodes (5): build_ablation_transformer(), get_qk_grad_norms(), MHAWithScalingToggle, run_experiment(), scaled_dot_product_attention_ablation()
 
 ### Community 5 - "Community 5"
-Cohesion: 0.22
-Nodes (7): experiment_2_4.py — Sinusoidal PE vs Learned Positional Embeddings DA6401 Assign, Transformer where PE type (sinusoidal vs learned) is configurable.     Inherits, TransformerWithPE, Decoder, Stack of N identical DecoderLayer modules with final LayerNorm., Args:             x        : shape [batch, tgt_len, d_model]             memory, Transformer
+Cohesion: 0.29
+Nodes (10): analyze_heads(), extract_encoder_attn(), log_head_heatmaps(), log_specialization_heatmaps(), make_heatmap_fig(), experiment_2_3.py — Attention Rollout & Head Specialization DA6401 Assignment 3, Single head heatmap as matplotlib figure → wandb.Image., Log one heatmap per head as wandb.Image. (+2 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.21
-Nodes (10): build_ablation_transformer(), get_qk_grad_norms(), experiment_2_2.py — Ablation: Scaling Factor 1/√dk DA6401 Assignment 3 — W&B Rep, Build Transformer with scaling toggle baked into every attn layer., Compute mean gradient norm of all W_q and W_k weight matrices     across all enc, Scaled dot-product attention with optional √dk scaling., scaled_dot_product_attention_ablation(), EncoderLayer (+2 more)
+Cohesion: 0.22
+Nodes (4): Dataset, debug_infer.py — diagnose why infer() outputs only periods, TransformerWithPE, Transformer
 
 ### Community 7 - "Community 7"
-Cohesion: 0.29
-Nodes (6): LearnedPositionalEncoding, Learned positional embeddings via nn.Embedding.      Unlike sinusoidal PE:, Args:             x : [batch, seq_len, d_model]         Returns:             [ba, DecoderLayer, Single Transformer decoder sub-layer (Post-LayerNorm):         x → [Masked Self-, Args:             x        : shape [batch, tgt_len, d_model]             memory
-
-### Community 8 - "Community 8"
-Cohesion: 0.29
-Nodes (5): DecoderLayerAblation, DecoderLayer using MHAWithScalingToggle., Encoder, Stack of N identical EncoderLayer modules with final LayerNorm., Args:             x    : shape [batch, src_len, d_model]             mask : shap
-
-### Community 9 - "Community 9"
-Cohesion: 0.25
-Nodes (4): PositionalEncoding, Sinusoidal Positional Encoding as in "Attention Is All You Need", §3.5., Args:             x : Input embeddings, shape [batch, seq_len, d_model], Build all model layers.
-
-### Community 10 - "Community 10"
-Cohesion: 0.39
-Nodes (2): MHAWithScalingToggle, MultiHeadAttention with scaling toggle for ablation.
-
-### Community 11 - "Community 11"
 Cohesion: 0.25
 Nodes (5): [batch, seq, d_model] → [batch, num_heads, seq, d_k], [batch, num_heads, seq, d_k] → [batch, seq, d_model], Args:             query : shape [batch, seq_q, d_model]             key   : shap, Compute Scaled Dot-Product Attention.          Attention(Q, K, V) = softmax( Q·K, scaled_dot_product_attention()
 
-### Community 12 - "Community 12"
+### Community 8 - "Community 8"
 Cohesion: 0.29
 Nodes (3): _MinimalVocab, Lightweight vocabulary: only needs a pre-built stoi dict.     No dependency on d, Download checkpoint, load weights + vocab + spaCy tokenizer.         Architectur
 
-### Community 13 - "Community 13"
-Cohesion: 1.0
-Nodes (1): Args:             x : shape [batch, seq_len, d_model]         Returns:
-
-### Community 17 - "Community 17"
-Cohesion: 1.0
-Nodes (1): Loads the Multi30k dataset and prepares tokenizers.
-
-### Community 18 - "Community 18"
-Cohesion: 1.0
-Nodes (1): Builds the vocabulary mapping for src (de) and tgt (en), including:         <unk
-
-### Community 19 - "Community 19"
-Cohesion: 1.0
-Nodes (1): Convert English and German sentences into integer token lists using         spac
-
-### Community 20 - "Community 20"
-Cohesion: 1.0
-Nodes (1): # TODO: Load dataset, load spacy tokenizers for de and en
-
-### Community 21 - "Community 21"
-Cohesion: 1.0
-Nodes (1): # TODO: Create the vocabulary dictionaries or torchtext Vocab equivalent
-
-### Community 22 - "Community 22"
-Cohesion: 1.0
-Nodes (1): # TODO: Tokenize and convert words to indices
-
-### Community 23 - "Community 23"
-Cohesion: 1.0
-Nodes (1): Compute the Noam scaling factor for the current step.          Returns:
-
-### Community 24 - "Community 24"
-Cohesion: 1.0
-Nodes (1): Compute learning rates for every param group.          Called internally by PyTo
-
-### Community 25 - "Community 25"
-Cohesion: 1.0
-Nodes (1): # TODO: Implement the NoamScheduler class below
-
-### Community 26 - "Community 26"
-Cohesion: 1.0
-Nodes (1): # TODO: Store d_model and warmup_steps as instance attributes
-
-### Community 27 - "Community 27"
-Cohesion: 1.0
-Nodes (1): # TODO: Call the parent __init__
-
-### Community 28 - "Community 28"
-Cohesion: 1.0
-Nodes (1): # TODO: Implement and return the Noam scale factor
-
-### Community 29 - "Community 29"
-Cohesion: 1.0
-Nodes (1): # TODO: Return a list of scaled LRs, one per param group
-
-### Community 30 - "Community 30"
-Cohesion: 1.0
-Nodes (1): Compute Scaled Dot-Product Attention.          Attention(Q, K, V) = softmax( Q·K
-
-### Community 31 - "Community 31"
-Cohesion: 1.0
-Nodes (1): Build a padding mask for the encoder (source sequence).      Args:         src
-
-### Community 32 - "Community 32"
-Cohesion: 1.0
-Nodes (1): Build a combined padding + causal (look-ahead) mask for the decoder.      Args:
-
-### Community 33 - "Community 33"
-Cohesion: 1.0
-Nodes (1): Multi-Head Attention as in "Attention Is All You Need", §3.2.2.          MultiHe
-
-### Community 34 - "Community 34"
-Cohesion: 1.0
-Nodes (1): Args:             query : shape [batch, seq_q, d_model]             key   : shap
-
-### Community 35 - "Community 35"
-Cohesion: 1.0
-Nodes (1): Sinusoidal Positional Encoding as in "Attention Is All You Need", §3.5.      Arg
-
-### Community 36 - "Community 36"
+### Community 9 - "Community 9"
 Cohesion: 1.0
 Nodes (1): Args:             x : Input embeddings, shape [batch, seq_len, d_model]
 
-### Community 37 - "Community 37"
-Cohesion: 1.0
-Nodes (1): Position-wise Feed-Forward Network, §3.3:          FFN(x) = max(0, x·W₁ + b₁)·W₂
-
-### Community 38 - "Community 38"
+### Community 10 - "Community 10"
 Cohesion: 1.0
 Nodes (1): Args:             x : shape [batch, seq_len, d_model]         Returns:
 
-### Community 39 - "Community 39"
-Cohesion: 1.0
-Nodes (1): Single Transformer encoder sub-layer:         x → [Self-Attention → Add & Norm]
-
-### Community 40 - "Community 40"
-Cohesion: 1.0
-Nodes (1): Args:             x        : shape [batch, src_len, d_model]             src_mas
-
-### Community 41 - "Community 41"
-Cohesion: 1.0
-Nodes (1): Single Transformer decoder sub-layer:         x → [Masked Self-Attn → Add & Norm
-
-### Community 42 - "Community 42"
-Cohesion: 1.0
-Nodes (1): Args:             x        : shape [batch, tgt_len, d_model]             memory
-
-### Community 43 - "Community 43"
-Cohesion: 1.0
-Nodes (1): Stack of N identical EncoderLayer modules with final LayerNorm.
-
-### Community 44 - "Community 44"
+### Community 11 - "Community 11"
 Cohesion: 1.0
 Nodes (1): Args:             x    : shape [batch, src_len, d_model]             mask : shap
 
-### Community 45 - "Community 45"
+### Community 12 - "Community 12"
 Cohesion: 1.0
-Nodes (1): Stack of N identical DecoderLayer modules with final LayerNorm.
+Nodes (1): Args:             x        : shape [batch, src_len, d_model]             src_mas
 
-### Community 46 - "Community 46"
+### Community 13 - "Community 13"
 Cohesion: 1.0
 Nodes (1): Args:             x        : shape [batch, tgt_len, d_model]             memory
 
-### Community 47 - "Community 47"
+### Community 14 - "Community 14"
 Cohesion: 1.0
-Nodes (1): Full Encoder-Decoder Transformer for sequence-to-sequence tasks.      Args:
+Nodes (1): Args:             x        : shape [batch, tgt_len, d_model]             memory
 
-### Community 48 - "Community 48"
+### Community 18 - "Community 18"
+Cohesion: 1.0
+Nodes (1): Build all model layers.
+
+### Community 19 - "Community 19"
+Cohesion: 1.0
+Nodes (1): Download checkpoint, load weights + vocab + spaCy tokenizer.         Architectur
+
+### Community 20 - "Community 20"
+Cohesion: 1.0
+Nodes (1): German string → list of lowercase tokens via spaCy.
+
+### Community 21 - "Community 21"
+Cohesion: 1.0
+Nodes (1): End-to-end NMT: German string → English string.         Greedy autoregressive de
+
+### Community 22 - "Community 22"
 Cohesion: 1.0
 Nodes (1): Run the full encoder stack.          Args:             src      : Token indices,
 
-### Community 49 - "Community 49"
+### Community 23 - "Community 23"
 Cohesion: 1.0
 Nodes (1): Run the full decoder stack and project to vocabulary logits.          Args:
 
-### Community 50 - "Community 50"
+### Community 24 - "Community 24"
 Cohesion: 1.0
 Nodes (1): Full encoder-decoder forward pass.          Args:             src      : shape [
 
+### Community 25 - "Community 25"
+Cohesion: 1.0
+Nodes (1): Loads the Multi30k dataset and prepares tokenizers.
+
+### Community 26 - "Community 26"
+Cohesion: 1.0
+Nodes (1): Builds the vocabulary mapping for src (de) and tgt (en), including:         <unk
+
+### Community 27 - "Community 27"
+Cohesion: 1.0
+Nodes (1): Convert English and German sentences into integer token lists using         spac
+
+### Community 28 - "Community 28"
+Cohesion: 1.0
+Nodes (1): # TODO: Load dataset, load spacy tokenizers for de and en
+
+### Community 29 - "Community 29"
+Cohesion: 1.0
+Nodes (1): # TODO: Create the vocabulary dictionaries or torchtext Vocab equivalent
+
+### Community 30 - "Community 30"
+Cohesion: 1.0
+Nodes (1): # TODO: Tokenize and convert words to indices
+
+### Community 31 - "Community 31"
+Cohesion: 1.0
+Nodes (1): Compute the Noam scaling factor for the current step.          Returns:
+
+### Community 32 - "Community 32"
+Cohesion: 1.0
+Nodes (1): Compute learning rates for every param group.          Called internally by PyTo
+
+### Community 33 - "Community 33"
+Cohesion: 1.0
+Nodes (1): # TODO: Implement the NoamScheduler class below
+
+### Community 34 - "Community 34"
+Cohesion: 1.0
+Nodes (1): # TODO: Store d_model and warmup_steps as instance attributes
+
+### Community 35 - "Community 35"
+Cohesion: 1.0
+Nodes (1): # TODO: Call the parent __init__
+
+### Community 36 - "Community 36"
+Cohesion: 1.0
+Nodes (1): # TODO: Implement and return the Noam scale factor
+
+### Community 37 - "Community 37"
+Cohesion: 1.0
+Nodes (1): # TODO: Return a list of scaled LRs, one per param group
+
+### Community 38 - "Community 38"
+Cohesion: 1.0
+Nodes (1): Compute Scaled Dot-Product Attention.          Attention(Q, K, V) = softmax( Q·K
+
+### Community 39 - "Community 39"
+Cohesion: 1.0
+Nodes (1): Build a padding mask for the encoder (source sequence).      Args:         src
+
+### Community 40 - "Community 40"
+Cohesion: 1.0
+Nodes (1): Build a combined padding + causal (look-ahead) mask for the decoder.      Args:
+
+### Community 41 - "Community 41"
+Cohesion: 1.0
+Nodes (1): Multi-Head Attention as in "Attention Is All You Need", §3.2.2.          MultiHe
+
+### Community 42 - "Community 42"
+Cohesion: 1.0
+Nodes (1): Args:             query : shape [batch, seq_q, d_model]             key   : shap
+
+### Community 43 - "Community 43"
+Cohesion: 1.0
+Nodes (1): Sinusoidal Positional Encoding as in "Attention Is All You Need", §3.5.      Arg
+
+### Community 44 - "Community 44"
+Cohesion: 1.0
+Nodes (1): Args:             x : Input embeddings, shape [batch, seq_len, d_model]
+
+### Community 45 - "Community 45"
+Cohesion: 1.0
+Nodes (1): Position-wise Feed-Forward Network, §3.3:          FFN(x) = max(0, x·W₁ + b₁)·W₂
+
+### Community 46 - "Community 46"
+Cohesion: 1.0
+Nodes (1): Args:             x : shape [batch, seq_len, d_model]         Returns:
+
+### Community 47 - "Community 47"
+Cohesion: 1.0
+Nodes (1): Single Transformer encoder sub-layer:         x → [Self-Attention → Add & Norm]
+
+### Community 48 - "Community 48"
+Cohesion: 1.0
+Nodes (1): Args:             x        : shape [batch, src_len, d_model]             src_mas
+
+### Community 49 - "Community 49"
+Cohesion: 1.0
+Nodes (1): Single Transformer decoder sub-layer:         x → [Masked Self-Attn → Add & Norm
+
+### Community 50 - "Community 50"
+Cohesion: 1.0
+Nodes (1): Args:             x        : shape [batch, tgt_len, d_model]             memory
+
 ### Community 51 - "Community 51"
 Cohesion: 1.0
-Nodes (1): # TODO: Task 2.3 — define:
+Nodes (1): Stack of N identical EncoderLayer modules with final LayerNorm.
 
 ### Community 52 - "Community 52"
 Cohesion: 1.0
-Nodes (1): # TODO:instantiate:
+Nodes (1): Args:             x    : shape [batch, src_len, d_model]             mask : shap
 
 ### Community 53 - "Community 53"
 Cohesion: 1.0
-Nodes (1): # TODO: instantiate:
+Nodes (1): Stack of N identical DecoderLayer modules with final LayerNorm.
 
 ### Community 54 - "Community 54"
 Cohesion: 1.0
-Nodes (1): # TODO: Instantiate
+Nodes (1): Args:             x        : shape [batch, tgt_len, d_model]             memory
 
 ### Community 55 - "Community 55"
+Cohesion: 1.0
+Nodes (1): Full Encoder-Decoder Transformer for sequence-to-sequence tasks.      Args:
+
+### Community 56 - "Community 56"
+Cohesion: 1.0
+Nodes (1): Run the full encoder stack.          Args:             src      : Token indices,
+
+### Community 57 - "Community 57"
+Cohesion: 1.0
+Nodes (1): Run the full decoder stack and project to vocabulary logits.          Args:
+
+### Community 58 - "Community 58"
+Cohesion: 1.0
+Nodes (1): Full encoder-decoder forward pass.          Args:             src      : shape [
+
+### Community 59 - "Community 59"
+Cohesion: 1.0
+Nodes (1): # TODO: Task 2.3 — define:
+
+### Community 60 - "Community 60"
+Cohesion: 1.0
+Nodes (1): # TODO:instantiate:
+
+### Community 61 - "Community 61"
+Cohesion: 1.0
+Nodes (1): # TODO: instantiate:
+
+### Community 62 - "Community 62"
+Cohesion: 1.0
+Nodes (1): # TODO: Instantiate
+
+### Community 63 - "Community 63"
 Cohesion: 1.0
 Nodes (1): # TODO: implement using torch.save({...}, path)
 
 ## Knowledge Gaps
-- **97 isolated node(s):** `dataset.py — Data Loading, Tokenization & Vocabulary DA6401 Assignment 3: "Atten`, `Token ↔ index mapping.      Special tokens always occupy fixed indices:`, `Build vocab from list-of-token-lists.         Only tokens appearing >= min_freq`, `List[str] → List[int]`, `Loads the Multi30k dataset and prepares tokenizers.          Args:             s` (+92 more)
+- **108 isolated node(s):** `dataset.py — Data Loading, Tokenization & Vocabulary DA6401 Assignment 3: "Atten`, `Token ↔ index mapping.      Special tokens always occupy fixed indices:`, `Build vocab from list-of-token-lists.         Only tokens appearing >= min_freq`, `List[str] → List[int]`, `Loads the Multi30k dataset and prepares tokenizers.          Args:             s` (+103 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 10`** (8 nodes): `.__init__()`, `.__init__()`, `MHAWithScalingToggle`, `.forward()`, `.__init__()`, `._merge_heads()`, `._split_heads()`, `MultiHeadAttention with scaling toggle for ablation.`
+- **Thin community `Community 9`** (2 nodes): `.forward()`, `Args:             x : Input embeddings, shape [batch, seq_len, d_model]`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 13`** (2 nodes): `.forward()`, `Args:             x : shape [batch, seq_len, d_model]         Returns:`
+- **Thin community `Community 10`** (2 nodes): `.forward()`, `Args:             x : shape [batch, seq_len, d_model]         Returns:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 17`** (1 nodes): `Loads the Multi30k dataset and prepares tokenizers.`
+- **Thin community `Community 11`** (2 nodes): `.forward()`, `Args:             x    : shape [batch, src_len, d_model]             mask : shap`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 18`** (1 nodes): `Builds the vocabulary mapping for src (de) and tgt (en), including:         <unk`
+- **Thin community `Community 12`** (2 nodes): `.forward()`, `Args:             x        : shape [batch, src_len, d_model]             src_mas`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (1 nodes): `Convert English and German sentences into integer token lists using         spac`
+- **Thin community `Community 13`** (2 nodes): `.forward()`, `Args:             x        : shape [batch, tgt_len, d_model]             memory`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (1 nodes): `# TODO: Load dataset, load spacy tokenizers for de and en`
+- **Thin community `Community 14`** (2 nodes): `.forward()`, `Args:             x        : shape [batch, tgt_len, d_model]             memory`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 21`** (1 nodes): `# TODO: Create the vocabulary dictionaries or torchtext Vocab equivalent`
+- **Thin community `Community 18`** (1 nodes): `Build all model layers.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (1 nodes): `# TODO: Tokenize and convert words to indices`
+- **Thin community `Community 19`** (1 nodes): `Download checkpoint, load weights + vocab + spaCy tokenizer.         Architectur`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (1 nodes): `Compute the Noam scaling factor for the current step.          Returns:`
+- **Thin community `Community 20`** (1 nodes): `German string → list of lowercase tokens via spaCy.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (1 nodes): `Compute learning rates for every param group.          Called internally by PyTo`
+- **Thin community `Community 21`** (1 nodes): `End-to-end NMT: German string → English string.         Greedy autoregressive de`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (1 nodes): `# TODO: Implement the NoamScheduler class below`
+- **Thin community `Community 22`** (1 nodes): `Run the full encoder stack.          Args:             src      : Token indices,`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (1 nodes): `# TODO: Store d_model and warmup_steps as instance attributes`
+- **Thin community `Community 23`** (1 nodes): `Run the full decoder stack and project to vocabulary logits.          Args:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (1 nodes): `# TODO: Call the parent __init__`
+- **Thin community `Community 24`** (1 nodes): `Full encoder-decoder forward pass.          Args:             src      : shape [`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (1 nodes): `# TODO: Implement and return the Noam scale factor`
+- **Thin community `Community 25`** (1 nodes): `Loads the Multi30k dataset and prepares tokenizers.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (1 nodes): `# TODO: Return a list of scaled LRs, one per param group`
+- **Thin community `Community 26`** (1 nodes): `Builds the vocabulary mapping for src (de) and tgt (en), including:         <unk`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (1 nodes): `Compute Scaled Dot-Product Attention.          Attention(Q, K, V) = softmax( Q·K`
+- **Thin community `Community 27`** (1 nodes): `Convert English and German sentences into integer token lists using         spac`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (1 nodes): `Build a padding mask for the encoder (source sequence).      Args:         src`
+- **Thin community `Community 28`** (1 nodes): `# TODO: Load dataset, load spacy tokenizers for de and en`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (1 nodes): `Build a combined padding + causal (look-ahead) mask for the decoder.      Args:`
+- **Thin community `Community 29`** (1 nodes): `# TODO: Create the vocabulary dictionaries or torchtext Vocab equivalent`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (1 nodes): `Multi-Head Attention as in "Attention Is All You Need", §3.2.2.          MultiHe`
+- **Thin community `Community 30`** (1 nodes): `# TODO: Tokenize and convert words to indices`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `Args:             query : shape [batch, seq_q, d_model]             key   : shap`
+- **Thin community `Community 31`** (1 nodes): `Compute the Noam scaling factor for the current step.          Returns:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `Sinusoidal Positional Encoding as in "Attention Is All You Need", §3.5.      Arg`
+- **Thin community `Community 32`** (1 nodes): `Compute learning rates for every param group.          Called internally by PyTo`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `Args:             x : Input embeddings, shape [batch, seq_len, d_model]`
+- **Thin community `Community 33`** (1 nodes): `# TODO: Implement the NoamScheduler class below`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `Position-wise Feed-Forward Network, §3.3:          FFN(x) = max(0, x·W₁ + b₁)·W₂`
+- **Thin community `Community 34`** (1 nodes): `# TODO: Store d_model and warmup_steps as instance attributes`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `Args:             x : shape [batch, seq_len, d_model]         Returns:`
+- **Thin community `Community 35`** (1 nodes): `# TODO: Call the parent __init__`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `Single Transformer encoder sub-layer:         x → [Self-Attention → Add & Norm]`
+- **Thin community `Community 36`** (1 nodes): `# TODO: Implement and return the Noam scale factor`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `Args:             x        : shape [batch, src_len, d_model]             src_mas`
+- **Thin community `Community 37`** (1 nodes): `# TODO: Return a list of scaled LRs, one per param group`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `Single Transformer decoder sub-layer:         x → [Masked Self-Attn → Add & Norm`
+- **Thin community `Community 38`** (1 nodes): `Compute Scaled Dot-Product Attention.          Attention(Q, K, V) = softmax( Q·K`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `Args:             x        : shape [batch, tgt_len, d_model]             memory`
+- **Thin community `Community 39`** (1 nodes): `Build a padding mask for the encoder (source sequence).      Args:         src`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `Stack of N identical EncoderLayer modules with final LayerNorm.`
+- **Thin community `Community 40`** (1 nodes): `Build a combined padding + causal (look-ahead) mask for the decoder.      Args:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `Args:             x    : shape [batch, src_len, d_model]             mask : shap`
+- **Thin community `Community 41`** (1 nodes): `Multi-Head Attention as in "Attention Is All You Need", §3.2.2.          MultiHe`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (1 nodes): `Stack of N identical DecoderLayer modules with final LayerNorm.`
+- **Thin community `Community 42`** (1 nodes): `Args:             query : shape [batch, seq_q, d_model]             key   : shap`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `Args:             x        : shape [batch, tgt_len, d_model]             memory`
+- **Thin community `Community 43`** (1 nodes): `Sinusoidal Positional Encoding as in "Attention Is All You Need", §3.5.      Arg`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `Full Encoder-Decoder Transformer for sequence-to-sequence tasks.      Args:`
+- **Thin community `Community 44`** (1 nodes): `Args:             x : Input embeddings, shape [batch, seq_len, d_model]`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `Run the full encoder stack.          Args:             src      : Token indices,`
+- **Thin community `Community 45`** (1 nodes): `Position-wise Feed-Forward Network, §3.3:          FFN(x) = max(0, x·W₁ + b₁)·W₂`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `Run the full decoder stack and project to vocabulary logits.          Args:`
+- **Thin community `Community 46`** (1 nodes): `Args:             x : shape [batch, seq_len, d_model]         Returns:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `Full encoder-decoder forward pass.          Args:             src      : shape [`
+- **Thin community `Community 47`** (1 nodes): `Single Transformer encoder sub-layer:         x → [Self-Attention → Add & Norm]`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `# TODO: Task 2.3 — define:`
+- **Thin community `Community 48`** (1 nodes): `Args:             x        : shape [batch, src_len, d_model]             src_mas`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `# TODO:instantiate:`
+- **Thin community `Community 49`** (1 nodes): `Single Transformer decoder sub-layer:         x → [Masked Self-Attn → Add & Norm`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `# TODO: instantiate:`
+- **Thin community `Community 50`** (1 nodes): `Args:             x        : shape [batch, tgt_len, d_model]             memory`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `# TODO: Instantiate`
+- **Thin community `Community 51`** (1 nodes): `Stack of N identical EncoderLayer modules with final LayerNorm.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `# TODO: implement using torch.save({...}, path)`
+- **Thin community `Community 52`** (1 nodes): `Args:             x    : shape [batch, src_len, d_model]             mask : shap`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 53`** (1 nodes): `Stack of N identical DecoderLayer modules with final LayerNorm.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 54`** (1 nodes): `Args:             x        : shape [batch, tgt_len, d_model]             memory`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 55`** (1 nodes): `Full Encoder-Decoder Transformer for sequence-to-sequence tasks.      Args:`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 56`** (1 nodes): `Run the full encoder stack.          Args:             src      : Token indices,`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 57`** (1 nodes): `Run the full decoder stack and project to vocabulary logits.          Args:`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 58`** (1 nodes): `Full encoder-decoder forward pass.          Args:             src      : shape [`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 59`** (1 nodes): `# TODO: Task 2.3 — define:`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 60`** (1 nodes): `# TODO:instantiate:`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 61`** (1 nodes): `# TODO: instantiate:`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 62`** (1 nodes): `# TODO: Instantiate`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 63`** (1 nodes): `# TODO: implement using torch.save({...}, path)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Transformer` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 9`, `Community 10`, `Community 12`?**
-  _High betweenness centrality (0.279) - this node is a cross-community bridge._
-- **Why does `NoamScheduler` connect `Community 2` to `Community 0`, `Community 1`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 10`?**
-  _High betweenness centrality (0.111) - this node is a cross-community bridge._
-- **Why does `Vocabulary` connect `Community 0` to `Community 1`, `Community 3`?**
-  _High betweenness centrality (0.111) - this node is a cross-community bridge._
-- **Are the 58 inferred relationships involving `Transformer` (e.g. with `debug_infer.py — diagnose why infer() outputs only periods` and `experiment_2_1.py — Noam Scheduler vs Fixed Learning Rate DA6401 Assignment 3 —`) actually correct?**
-  _`Transformer` has 58 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 40 inferred relationships involving `NoamScheduler` (e.g. with `experiment_2_1.py — Noam Scheduler vs Fixed Learning Rate DA6401 Assignment 3 —` and `Train transformer with either Noam or fixed LR.      Args:         use_noam : Tr`) actually correct?**
-  _`NoamScheduler` has 40 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 24 inferred relationships involving `LabelSmoothingLoss` (e.g. with `experiment_2_1.py — Noam Scheduler vs Fixed Learning Rate DA6401 Assignment 3 —` and `Train transformer with either Noam or fixed LR.      Args:         use_noam : Tr`) actually correct?**
-  _`LabelSmoothingLoss` has 24 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 16 inferred relationships involving `MultiHeadAttention` (e.g. with `MHAWithScalingToggle` and `EncoderLayerAblation`) actually correct?**
-  _`MultiHeadAttention` has 16 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `Transformer` connect `Community 1` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 8`?**
+  _High betweenness centrality (0.282) - this node is a cross-community bridge._
+- **Why does `NoamScheduler` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 4`, `Community 6`?**
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._
+- **Why does `Vocabulary` connect `Community 2` to `Community 0`, `Community 1`, `Community 3`?**
+  _High betweenness centrality (0.103) - this node is a cross-community bridge._
+- **Are the 68 inferred relationships involving `Transformer` (e.g. with `debug_infer.py — diagnose why infer() outputs only periods` and `experiment_2_1.py — Noam Scheduler vs Fixed Learning Rate DA6401 Assignment 3 —`) actually correct?**
+  _`Transformer` has 68 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 47 inferred relationships involving `NoamScheduler` (e.g. with `experiment_2_1.py — Noam Scheduler vs Fixed Learning Rate DA6401 Assignment 3 —` and `One epoch of training or evaluation.     Returns (avg_loss, token_accuracy).`) actually correct?**
+  _`NoamScheduler` has 47 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 29 inferred relationships involving `LabelSmoothingLoss` (e.g. with `experiment_2_1.py — Noam Scheduler vs Fixed Learning Rate DA6401 Assignment 3 —` and `One epoch of training or evaluation.     Returns (avg_loss, token_accuracy).`) actually correct?**
+  _`LabelSmoothingLoss` has 29 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 22 inferred relationships involving `PositionwiseFeedForward` (e.g. with `MHAWithScalingToggle` and `EncoderLayerAblation`) actually correct?**
+  _`PositionwiseFeedForward` has 22 INFERRED edges - model-reasoned connections that need verification._

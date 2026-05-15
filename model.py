@@ -518,7 +518,7 @@ class Transformer(nn.Module):
     """
 
     # ── REPLACE THIS WITH YOUR ACTUAL GOOGLE DRIVE FILE ID ────────────
-    _GDRIVE_ID       = "1uUXcEhitXt5eX6Y5HD3J59O7iYrt79LU"
+    _GDRIVE_ID       = "YOUR_GDRIVE_FILE_ID_HERE"
     _CHECKPOINT_PATH = "best_model.pt"
     # ──────────────────────────────────────────────────────────────────
 
@@ -535,17 +535,16 @@ class Transformer(nn.Module):
     ) -> None:
         super().__init__()
 
-        # Build model architecture first
+        # Build model architecture
         self._build_model(
             src_vocab_size, tgt_vocab_size,
             d_model, N, num_heads, d_ff, dropout,
         )
 
-        # Always load weights from checkpoint (download if needed)
-        self._setup_inference(
-            self._GDRIVE_ID,
-            checkpoint_path,
-        )
+        # checkpoint_path=None  → training mode (skip download/load)
+        # checkpoint_path given → inference mode (download + load weights)
+        if checkpoint_path is not None:
+            self._setup_inference(self._GDRIVE_ID, checkpoint_path)
 
     def _build_model(
         self,
