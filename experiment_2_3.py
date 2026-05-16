@@ -34,7 +34,7 @@ def extract_encoder_attn(model, src, src_mask):
 
 
 def make_heatmap_fig(attn_matrix, tokens, title=""):
-    """Single head heatmap as matplotlib figure → wandb.Image."""
+    """Single head heatmap as matplotlib figure to wandb.Image."""
     n   = len(tokens)
     fig, ax = plt.subplots(figsize=(max(4, n*0.5), max(4, n*0.5)))
     im = ax.imshow(attn_matrix, cmap="viridis", vmin=0,
@@ -157,10 +157,9 @@ def run_experiment():
         attn = attn[:, :n, :n]
         toks = src_tokens[:n]
 
-        # ── All-heads heatmaps ─────────────────────────────────────────
+
         log_head_heatmaps(attn, toks, sent_idx)
 
-        # ── Head analysis ──────────────────────────────────────────────
         stats = analyze_heads(attn)
         all_head_stats.append(stats)
 
@@ -178,7 +177,6 @@ def run_experiment():
         nxt_h  = max(stats, key=lambda x: x["next_token"])["head"] - 1
         interesting = list(dict.fromkeys([diag_h, nxt_h, lr_h, unif_h]))[:4]
 
-        # ── Specialization comparison heatmaps ─────────────────────────
         log_specialization_heatmaps(attn, toks, interesting, sent_idx)
 
         print(f"  Head stats:")

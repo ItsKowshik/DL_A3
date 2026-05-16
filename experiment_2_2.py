@@ -30,9 +30,6 @@ from train import LabelSmoothingLoss, save_checkpoint, evaluate_bleu
 import config
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  PATCHED ATTENTION — optional scaling toggle
-# ══════════════════════════════════════════════════════════════════════
 
 def scaled_dot_product_attention_ablation(
     Q: torch.Tensor,
@@ -178,9 +175,7 @@ def build_ablation_transformer(src_vocab_size, tgt_vocab_size, use_scaling=True)
     )
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  GRADIENT NORM HELPER
-# ══════════════════════════════════════════════════════════════════════
+
 
 def get_qk_grad_norms(model):
     """Mean grad norm of W_q and W_k across all MHA layers."""
@@ -199,9 +194,6 @@ def get_qk_grad_norms(model):
 GRAD_LOG_STEPS = 1000
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  TRAINING RUNNER
-# ══════════════════════════════════════════════════════════════════════
 
 def run_experiment(use_scaling: bool):
     device   = "cuda" if torch.cuda.is_available() else "cpu"
@@ -345,9 +337,6 @@ def run_experiment(use_scaling: bool):
     wandb.finish()
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  ENTRY POINT
-# ══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     run_experiment(use_scaling=True)

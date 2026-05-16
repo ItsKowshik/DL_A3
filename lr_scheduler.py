@@ -12,9 +12,6 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import LRScheduler
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  NOAM SCHEDULER
-# ══════════════════════════════════════════════════════════════════════
 
 class NoamScheduler(LRScheduler):
     """
@@ -44,7 +41,6 @@ class NoamScheduler(LRScheduler):
         # because it calls get_lr() internally
         super().__init__(optimizer, last_epoch)
 
-    # ──────────────────────────────────────────────────────────────────
 
     def _get_lr_scale(self) -> float:
         """
@@ -61,7 +57,7 @@ class NoamScheduler(LRScheduler):
         )
         return scale
 
-    # ──────────────────────────────────────────────────────────────────
+
 
     def get_lr(self) -> list:
         """
@@ -75,9 +71,7 @@ class NoamScheduler(LRScheduler):
         return [base_lr * scale for base_lr in self.base_lrs]
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  HELPER — do NOT modify
-# ══════════════════════════════════════════════════════════════════════
+
 
 def get_lr_history(
     d_model: int,
@@ -108,9 +102,7 @@ def get_lr_history(
     return history
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  QUICK VISUAL CHECK — run: python lr_scheduler.py
-# ══════════════════════════════════════════════════════════════════════
+
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
@@ -144,7 +136,7 @@ if __name__ == "__main__":
     assert abs(actual_peak - expected_peak) < 1e-8, \
         f"Peak LR {actual_peak} != expected {expected_peak}"
 
-    print("All autograder checks passed ✓")
+    print("All autograder checks passed ")
     print(f"Peak LR : {actual_peak:.6f}  at step ~{peak_idx}")
     print(f"LR @ step 1  : {lrs[0]:.8f}")
     print(f"LR @ warmup  : {lrs[WARMUP_STEPS-1]:.6f}")
@@ -160,4 +152,4 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig("noam_lr_curve.png", dpi=150)
     plt.show()
-    print("Plot saved → noam_lr_curve.png")
+    print("Plot saved to noam_lr_curve.png")

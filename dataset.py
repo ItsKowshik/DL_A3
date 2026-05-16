@@ -13,12 +13,6 @@ from torch.nn.utils.rnn import pad_sequence
 from collections import Counter
 from datasets import load_dataset
 import spacy
-
-
-# ══════════════════════════════════════════════════════════════════════
-#  SPECIAL TOKEN CONSTANTS
-# ══════════════════════════════════════════════════════════════════════
-
 UNK_TOKEN = "<unk>"
 PAD_TOKEN = "<pad>"
 SOS_TOKEN = "<sos>"
@@ -31,14 +25,9 @@ EOS_IDX = 3
 
 SPECIAL_TOKENS = [UNK_TOKEN, PAD_TOKEN, SOS_TOKEN, EOS_TOKEN]
 
-
-# ══════════════════════════════════════════════════════════════════════
-#  VOCABULARY
-# ══════════════════════════════════════════════════════════════════════
-
 class Vocabulary:
     """
-    Token ↔ index mapping.
+    Token to index mapping.
 
     Special tokens always occupy fixed indices:
         0: <unk>  1: <pad>  2: <sos>  3: <eos>
@@ -73,13 +62,8 @@ class Vocabulary:
         return self.stoi.get(token, UNK_IDX)
 
     def encode(self, tokens):
-        """List[str] → List[int]"""
+        """List[str] to List[int]"""
         return [self.lookup_index(t) for t in tokens]
-
-
-# ══════════════════════════════════════════════════════════════════════
-#  MULTI30K DATASET
-# ══════════════════════════════════════════════════════════════════════
 
 class Multi30kDataset(Dataset):
     def __init__(self, split: str = "train", src_vocab=None, tgt_vocab=None):
@@ -92,20 +76,12 @@ class Multi30kDataset(Dataset):
             tgt_vocab : Pre-built Vocabulary for English (None = build fresh)
         """
         self.split = split
-
-        # ── Load dataset from HuggingFace ─────────────────────────────
         raw = load_dataset("bentrevett/multi30k")
         self.data = raw[split]
-
-        # ── Load spaCy tokenizers ─────────────────────────────────────
         self.spacy_de = spacy.load("de_core_news_sm")   # German (source)
         self.spacy_en = spacy.load("en_core_web_sm")    # English (target)
-
-        # ── Tokenize all sentences ────────────────────────────────────
         self.src_tokens = [self._tokenize_de(ex["de"]) for ex in self.data]
         self.tgt_tokens = [self._tokenize_en(ex["en"]) for ex in self.data]
-
-        # ── Build or reuse vocab ──────────────────────────────────────
         if src_vocab is None:
             self.src_vocab = Vocabulary()
             self.src_vocab.build(self.src_tokens, min_freq=2)
@@ -118,21 +94,18 @@ class Multi30kDataset(Dataset):
         else:
             self.tgt_vocab = tgt_vocab
 
-        # ── Convert to index sequences ─────────────────────────────────
         self.src_indices = self.process_data(self.src_tokens, self.src_vocab)
         self.tgt_indices = self.process_data(self.tgt_tokens, self.tgt_vocab)
 
-    # ── Tokenizers ──────────────────────────────────────────────────
 
     def _tokenize_de(self, text: str):
-        """German text → list of lowercase tokens via spaCy."""
+        """German text to list of lowercase tokens via spaCy."""
         return [tok.text.lower() for tok in self.spacy_de.tokenizer(text)]
 
     def _tokenize_en(self, text: str):
-        """English text → list of lowercase tokens via spaCy."""
+        """English text to list of lowercase tokens via spaCy."""
         return [tok.text.lower() for tok in self.spacy_en.tokenizer(text)]
 
-    # ── Vocab building (kept for interface compatibility) ────────────
 
     def build_vocab(self):
         """
@@ -145,11 +118,10 @@ class Multi30kDataset(Dataset):
         self.tgt_vocab = Vocabulary()
         self.tgt_vocab.build(self.tgt_tokens, min_freq=2)
 
-    # ── Index conversion ─────────────────────────────────────────────
 
     def process_data(self, token_lists, vocab: Vocabulary):
         """
-        Convert token lists → index tensors.
+        Convert token lists to index tensors.
         Wraps each sentence with <sos> and <eos>.
         """
         processed = []
@@ -158,7 +130,6 @@ class Multi30kDataset(Dataset):
             processed.append(torch.tensor(indices, dtype=torch.long))
         return processed
 
-    # ── PyTorch Dataset interface ────────────────────────────────────
 
     def __len__(self):
         return len(self.data)
@@ -167,9 +138,6 @@ class Multi30kDataset(Dataset):
         return self.src_indices[idx], self.tgt_indices[idx]
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  COLLATE FUNCTION  (pads variable-length sequences in a batch)
-# ══════════════════════════════════════════════════════════════════════
 
 def collate_fn(batch):
     """
@@ -187,10 +155,6 @@ def collate_fn(batch):
     tgt_batch = pad_sequence(tgt_batch, batch_first=True, padding_value=PAD_IDX)
     return src_batch, tgt_batch
 
-
-# ══════════════════════════════════════════════════════════════════════
-#  FACTORY FUNCTION  (single entry point used by train.py)
-# ══════════════════════════════════════════════════════════════════════
 
 def get_dataloaders(batch_size: int = 128):
     """
@@ -224,9 +188,6 @@ def get_dataloaders(batch_size: int = 128):
     return train_loader, val_loader, test_loader, src_vocab, tgt_vocab
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  QUICK SANITY CHECK  — run: python dataset.py
-# ══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     print("Loading dataset...")

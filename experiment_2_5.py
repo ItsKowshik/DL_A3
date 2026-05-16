@@ -8,7 +8,7 @@ Trains two models:
 
 Logs per epoch:
     - train_loss / val_loss
-    - train_confidence / val_confidence  ← softmax prob of correct token
+    - train_confidence / val_confidence  softmax prob of correct token
     - train_perplexity / val_perplexity
 
 Group: "label-smoothing"
@@ -28,9 +28,6 @@ from train import save_checkpoint, evaluate_bleu
 import config
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  LABEL SMOOTHING LOSS WITH CONFIDENCE TRACKING
-# ══════════════════════════════════════════════════════════════════════
 
 class LabelSmoothingLossTracked(nn.Module):
     """
@@ -64,7 +61,6 @@ class LabelSmoothingLossTracked(nn.Module):
 
     def forward(self, logits: torch.Tensor,
                 target: torch.Tensor) -> torch.Tensor:
-        # ── Track confidence (no gradient) ────────────────────────────
         with torch.no_grad():
             probs      = F.softmax(logits, dim=-1)
             true_probs = probs.gather(1, target.unsqueeze(1)).squeeze(1)
@@ -73,7 +69,6 @@ class LabelSmoothingLossTracked(nn.Module):
                 self._conf_sum   += true_probs[pad_mask].mean().item()
                 self._conf_count += 1
 
-        # ── Loss ──────────────────────────────────────────────────────
         if self.smoothing == 0.0:
             return F.cross_entropy(logits, target,
                                    ignore_index=self.pad_idx,
@@ -92,9 +87,7 @@ class LabelSmoothingLossTracked(nn.Module):
         return loss.sum() / non_pad
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  ONE EPOCH WITH CONFIDENCE TRACKING
-# ══════════════════════════════════════════════════════════════════════
+
 
 def run_epoch_tracked(data_iter, model, loss_fn, optimizer=None,
                       scheduler=None, is_train=True, device="cpu"):
@@ -138,9 +131,7 @@ def run_epoch_tracked(data_iter, model, loss_fn, optimizer=None,
     return avg_loss, perplexity, confidence
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  TRAINING RUNNER
-# ══════════════════════════════════════════════════════════════════════
+
 
 def run_experiment(smoothing: float):
     device   = "cuda" if torch.cuda.is_available() else "cpu"
@@ -255,9 +246,7 @@ def run_experiment(smoothing: float):
     wandb.finish()
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  ENTRY POINT
-# ══════════════════════════════════════════════════════════════════════
+
 
 if __name__ == "__main__":
     # Run A: label smoothing eps=0.1 (paper default)
@@ -274,5 +263,5 @@ if __name__ == "__main__":
     print("  3. val_loss + test_bleu comparison")
     print()
     print("Theory checks:")
-    print("  eps=0.0 → confidence ~0.7+, low perplexity, may overfit")
-    print("  eps=0.1 → confidence ~0.6-0.65, higher perplexity, better BLEU")
+    print("  eps=0.0  confidence ~0.7+, low perplexity, may overfit")
+    print("  eps=0.1  confidence ~0.6-0.65, higher perplexity, better BLEU")

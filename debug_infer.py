@@ -8,12 +8,9 @@ from train import greedy_decode, load_checkpoint
 import config
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# ── Load vocab the TRAINING way (ground truth) ─────────────────────────
 print("Building vocab from training data...")
 _, _, test_loader, src_vocab, tgt_vocab = get_dataloaders(batch_size=1)
 
-# ── Load model in TRAINING mode (known working) ────────────────────────
 model = Transformer(
     src_vocab_size=len(src_vocab),
     tgt_vocab_size=len(tgt_vocab),
@@ -28,23 +25,20 @@ CKPT = "best_model_40.pt"
 load_checkpoint(CKPT, model)
 model.eval()
 
-# ── Test sentence ──────────────────────────────────────────────────────
 german = "Zwei junge Männer spielen Fußball."
 
-# ── Tokenise with spaCy (same as dataset.py) ──────────────────────────
 import spacy
 spacy_de = spacy.load("de_core_news_sm")
 tokens = [tok.text.lower() for tok in spacy_de.tokenizer(german)]
 print(f"\nGerman tokens : {tokens}")
 
-# ── Encode with TRAINING vocab ─────────────────────────────────────────
 indices = [SOS_IDX] + src_vocab.encode(tokens) + [EOS_IDX]
 print(f"Src indices   : {indices}")
 
 src      = torch.tensor([indices], dtype=torch.long, device=device)
 src_mask = make_src_mask(src).to(device)
 
-# ── Greedy decode (known working) ──────────────────────────────────────
+
 ys = greedy_decode(model, src, src_mask, max_len=50,
                    start_symbol=SOS_IDX, end_symbol=EOS_IDX, device=device)
 
@@ -56,7 +50,7 @@ translation  = " ".join(t for t in out_tokens
                         if t not in ("<sos>","<eos>","<pad>","<unk>"))
 print(f"Translation   : {translation}")
 
-# ── Now compare with inference-mode vocab ──────────────────────────────
+
 print("\n── Inference-mode vocab check ──")
 inf_model = Transformer().to(device)  # loads from GDrive checkpoint
 inf_model.eval()

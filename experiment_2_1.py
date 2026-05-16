@@ -27,9 +27,6 @@ import config
 from tqdm import tqdm
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  EPOCH RUNNER WITH TOKEN-LEVEL ACCURACY
-# ══════════════════════════════════════════════════════════════════════
 
 def run_epoch_with_acc(data_iter, model, loss_fn, optimizer=None,
                        scheduler=None, is_train=True, device="cpu"):
@@ -88,9 +85,6 @@ def run_epoch_with_acc(data_iter, model, loss_fn, optimizer=None,
     return avg_loss, accuracy
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  EXPERIMENT RUNNER
-# ══════════════════════════════════════════════════════════════════════
 
 def run_experiment(use_noam: bool, fixed_lr: float = 1e-4):
     device   = "cuda" if torch.cuda.is_available() else "cpu"
@@ -220,5 +214,5 @@ if __name__ == "__main__":
     print("W&B → group 'noam-vs-fixed-lr'")
     print("Key plots:")
     print("  1. train_loss + val_loss overlay")
-    print("  2. train_accuracy + val_accuracy overlay ← validation accuracy curves")
+    print("  2. train_accuracy + val_accuracy overlay to validation accuracy curves")
     print("  3. lr vs step — warmup curve vs flat line")

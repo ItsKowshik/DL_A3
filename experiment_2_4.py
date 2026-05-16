@@ -27,9 +27,6 @@ from train import LabelSmoothingLoss, run_epoch, save_checkpoint, evaluate_bleu
 import config
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  LEARNED POSITIONAL EMBEDDING MODULE
-# ══════════════════════════════════════════════════════════════════════
 
 class LearnedPositionalEncoding(nn.Module):
     """
@@ -48,9 +45,6 @@ class LearnedPositionalEncoding(nn.Module):
         return self.dropout(x + self.pos_embed(positions))
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  TRANSFORMER WITH SWAPPABLE PE
-# ══════════════════════════════════════════════════════════════════════
 
 class TransformerWithPE(Transformer):
     """Transformer where PE type is configurable. Bypasses parent __init__."""
@@ -101,9 +95,7 @@ class TransformerWithPE(Transformer):
         return self.decode(self.encode(src, src_mask), src_mask, tgt, tgt_mask)
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  TRAINING RUNNER
-# ══════════════════════════════════════════════════════════════════════
+
 
 def run_experiment(use_learned_pe: bool):
     device   = "cuda" if torch.cuda.is_available() else "cpu"
@@ -217,9 +209,6 @@ def run_experiment(use_learned_pe: bool):
     wandb.finish()
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  ENTRY POINT
-# ══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     # Run A: sinusoidal PE (paper method)
