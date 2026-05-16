@@ -247,8 +247,8 @@ zip submission.zip model.py train.py dataset.py lr_scheduler.py config.py
 # Autograder downloads weights automatically via gdown
 ```
 
-**W&B Report:** [Public Report Link](https://wandb.ai/k-indian-institute-of-technology-madras/A3)  
-**GitHub:** [Repository](https://github.com/ItsKowshik/da6401_assignment_3)
+**W&B Report:** [Public Report Link](https://wandb.ai/k-indian-institute-of-technology-madras/A3/reports/DA6401-Assignment-3-ID25M803--VmlldzoxNjc2MzU3OQ?accessToken=o44f0zcxjqimxtg9fz0p577g63rf6rn42693m1e4fjp53nebo2q9xslqgm68d3uc)  
+**GitHub:** [Repository](https://github.com/ItsKowshik/DL_A3)
 
 ---
 
