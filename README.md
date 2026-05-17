@@ -41,7 +41,7 @@ A3/
 
 ```bash
 # Clone repo
-git clone https://github.com/ItsKowshik/da6401_assignment_3
+git clone https://github.com/ItsKowshik/DL_A3
 cd da6401_assignment_3
 
 # Create environment

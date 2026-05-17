@@ -464,11 +464,6 @@ class Decoder(nn.Module):
 # ❾  FULL TRANSFORMER
 # ══════════════════════════════════════════════════════════════════════
 
-# ══════════════════════════════════════════════════════════════════════
-# SELF-CONTAINED VOCAB + CONSTANTS (no dataset.py / datasets import)
-# Used by Transformer.__init__ in inference mode on autograder.
-# ══════════════════════════════════════════════════════════════════════
-
 _UNK_IDX = 0
 _PAD_IDX = 1
 _SOS_IDX = 2
@@ -642,8 +637,6 @@ class Transformer(nn.Module):
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
 
-    # ── INFERENCE ENTRY POINT (autograder contract) ─────────────────
-
     def infer(self, src_sentence: str) -> str:
         """
         End-to-end NMT: German string → English string.
@@ -746,10 +739,6 @@ class Transformer(nn.Module):
         memory = self.encode(src, src_mask)
         return self.decode(memory, src_mask, tgt, tgt_mask)
 
-
-# ══════════════════════════════════════════════════════════════════════
-#  QUICK SANITY CHECK  — run: python model.py
-# ══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"

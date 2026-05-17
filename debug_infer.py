@@ -71,5 +71,5 @@ print(f"\n'.' index — training vocab: {dot_train}, inference vocab: {dot_infer
 # Check the generated indices in inference vocab
 print(f"\nGenerated indices via inference vocab: {out_indices}")
 for idx in out_indices[:8]:
-    print(f"  idx {idx} → training='{tgt_vocab.lookup_token(idx)}'  "
+    print(f"  idx {idx}  training='{tgt_vocab.lookup_token(idx)}'  "
           f"inference='{inf_model.tgt_vocab.lookup_token(idx)}'")

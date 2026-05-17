@@ -8,7 +8,7 @@ Trains the same Transformer twice:
 
 Logs per epoch:
     - train_loss / val_loss
-    - train_accuracy / val_accuracy  ← token-level (correct non-pad predictions)
+    - train_accuracy / val_accuracy   token-level (correct non-pad predictions)
     - lr vs step (warmup curve vs flat line)
 
 Group: "noam-vs-fixed-lr"
@@ -190,7 +190,7 @@ def run_experiment(use_noam: bool, fixed_lr: float = 1e-4):
             model.src_vocab  = src_vocab
             model.tgt_vocab  = tgt_vocab
             save_checkpoint(model, optimizer, scheduler, epoch, best_path)
-            print(f"  ✓ Best saved")
+            print(f"  Best saved")
         else:
             patience_counter += 1
             if patience_counter >= config.PATIENCE:
